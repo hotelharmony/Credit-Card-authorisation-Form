@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Credit Card Authorization – Super 8 Hernando MS</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Arial, sans-serif; background: #e8e8e8; min-height: 100vh; padding: 2rem 1rem 3rem; color: #1a1a1a; }
+.wrapper { max-width: 700px; margin: 0 auto; }
+.staff-panel { background: #1a2744; color: white; border-radius: 4px; padding: 1.25rem 2rem 1.5rem; margin-bottom: 1rem; }
+.staff-panel h3 { font-size: 0.82rem; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.4rem; color: #c8b97a; }
+.staff-panel p { font-size: 0.78rem; color: #9ab; margin-bottom: 1rem; }
+.staff-panel .flabel { color: #bbb; font-size: 0.67rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: bold; display: block; margin-bottom: 0.3rem; }
+.staff-panel input { background: #253660; border: 1px solid #4a6090; color: white; border-radius: 3px; padding: 0.5rem 0.7rem; width: 100%; font-size: 0.9rem; font-family: Arial, sans-serif; }
+.staff-panel input:focus { outline: none; border-color: #c8b97a; }
+.srow { display: grid; gap: 0.85rem; margin-bottom: 0.85rem; }
+.srow.c3 { grid-template-columns: 1fr 1fr 1fr; }
+.srow.c2 { grid-template-columns: 1fr 1fr; }
+.sfield { display: flex; flex-direction: column; gap: 0.3rem; }
+.gen-link-btn { width: 100%; padding: 0.75rem; background: #c8b97a; color: #1a2744; border: none; border-radius: 3px; font-weight: bold; font-size: 0.88rem; cursor: pointer; margin-top: 0.5rem; letter-spacing: 0.08em; text-transform: uppercase; font-family: Arial, sans-serif; }
+.gen-link-btn:hover { background: #deca8a; }
+.link-output { margin-top: 0.9rem; background: #253660; border: 1px solid #4a6090; border-radius: 3px; padding: 0.75rem 1rem; font-size: 0.78rem; word-break: break-all; color: #a8c8f8; display: none; }
+.copy-btn { display: inline-block; margin-top: 0.5rem; background: none; border: 1px solid #4a6090; border-radius: 3px; color: #c8b97a; padding: 0.35rem 0.8rem; cursor: pointer; font-size: 0.73rem; letter-spacing: 0.08em; text-transform: uppercase; font-family: Arial, sans-serif; }
+.copy-btn:hover { background: #2e4578; }
+.header { background: white; border: 1px solid #ccc; border-bottom: none; border-radius: 4px 4px 0 0; padding: 1.5rem 2rem 1.2rem; text-align: center; }
+.logo-block { display: inline-flex; align-items: center; justify-content: center; background: #f5c800; border: 3px solid #c8a200; border-radius: 6px; padding: 0.35rem 0.9rem 0.45rem; margin-bottom: 1rem; }
+.logo-super { font-family: Georgia, serif; font-style: italic; font-size: 1.7rem; color: #cc0000; line-height: 1; }
+.logo-8 { font-family: Arial, sans-serif; font-size: 3rem; font-weight: 900; color: #cc0000; line-height: 1; margin-left: 3px; }
+.logo-wyndham { display: block; font-size: 0.42rem; letter-spacing: 0.25em; text-transform: uppercase; color: #444; text-align: center; margin-top: 2px; }
+.motel-info { font-size: 0.9rem; line-height: 1.75; color: #111; }
+.motel-info a { color: #cc0000; text-decoration: none; }
+.title-bar { background: #111; color: white; text-align: center; padding: 0.6rem 1rem; font-size: 0.9rem; font-weight: bold; letter-spacing: 0.18em; text-transform: uppercase; }
+.prefill-notice { background: #e8f4ff; border: 1.5px solid #7ab8f0; border-radius: 4px; padding: 0.75rem 1rem; font-size: 0.82rem; color: #1a5fa8; margin-bottom: 1.25rem; display: none; }
+.form-body { background: white; border: 1px solid #ccc; border-top: none; border-bottom: none; padding: 1.6rem 2rem; }
+.section { margin-bottom: 1.5rem; }
+.section-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.18em; font-weight: bold; color: #777; border-bottom: 1px solid #ccc; padding-bottom: 0.3rem; margin-bottom: 1rem; }
+.field-row { display: grid; gap: 0.9rem; margin-bottom: 0.9rem; align-items: end; }
+.cols-2 { grid-template-columns: 1fr 1fr; }
+.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.field { display: flex; flex-direction: column; gap: 0.3rem; }
+label { font-size: 0.67rem; text-transform: uppercase; letter-spacing: 0.1em; color: #666; font-weight: bold; }
+input[type="text"], input[type="tel"], input[type="date"], input[type="number"], select, textarea {
+  width: 100%; padding: 0.52rem 0.7rem; border: 1px solid #bbb; border-radius: 3px;
+  font-size: 0.92rem; font-family: Arial, sans-serif; background: #fafafa; color: #111; transition: border-color 0.15s;
+}
+input:focus, select:focus, textarea:focus { outline: none; border-color: #cc0000; background: white; }
+input[readonly] { background: #e8f4ff; border-color: #7ab8f0; color: #1a5fa8; font-weight: bold; cursor: default; }
+textarea { resize: vertical; min-height: 56px; }
+.radio-row { display: flex; flex-wrap: wrap; gap: 1rem; padding: 0.45rem 0; }
+.radio-row label { text-transform: none; letter-spacing: 0; font-size: 0.88rem; font-weight: normal; display: flex; align-items: center; gap: 0.35rem; cursor: pointer; color: #111; }
+.incidentals-box { display: flex; align-items: center; gap: 1.25rem; background: #fffce6; border: 2px solid #f5c800; border-radius: 3px; padding: 0.65rem 1rem; margin-bottom: 0.9rem; }
+.incidentals-box .inc-text { font-weight: bold; font-style: italic; font-size: 0.88rem; color: #222; flex: 1; }
+.incidentals-box label { font-size: 0.95rem; font-weight: bold; text-transform: none; letter-spacing: 0; display: flex; align-items: center; gap: 0.35rem; cursor: pointer; color: #111; }
+.upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 0.9rem; }
+.upload-slot { border: 2px dashed #bbb; border-radius: 8px; padding: 1rem 0.75rem 0.75rem; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; background: #fafafa; position: relative; }
+.upload-slot:hover { border-color: #cc0000; background: #fff8f8; }
+.upload-slot.has-image { border-color: #2a9d2a; border-style: solid; background: #f6fff6; }
+.upload-slot input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; z-index: 2; }
+.slot-icon { font-size: 2rem; margin-top: 0.5rem; margin-bottom: 0.4rem; }
+.slot-title { font-size: 0.82rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em; color: #333; margin-bottom: 0.25rem; }
+.slot-side { font-size: 0.78rem; font-weight: bold; color: #cc0000; margin-bottom: 0.3rem; }
+.slot-hint { font-size: 0.7rem; color: #888; font-style: italic; line-height: 1.5; padding: 0 0.2rem; margin-top: 0.3rem; }
+.upload-preview { width: 100%; max-height: 110px; object-fit: cover; border-radius: 4px; display: none; margin-bottom: 0.35rem; }
+.upload-check { color: #2a9d2a; font-size: 0.78rem; font-weight: bold; margin-top: 0.35rem; display: none; }
+.card-mock { width: 82px; height: 52px; background: linear-gradient(135deg,#2a3a6e,#4a6ab0); border-radius: 5px; margin: 0.4rem auto 0.2rem; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.25); flex-shrink: 0; }
+.card-mock .chip { width: 13px; height: 10px; background: #d4aa50; border-radius: 2px; position: absolute; top: 10px; left: 8px; }
+.card-mock .cnum { position: absolute; bottom: 15px; left: 6px; font-size: 4.5px; color: rgba(255,255,255,0.8); letter-spacing: 0.1em; font-family: Courier New, monospace; }
+.card-mock .cname { position: absolute; bottom: 6px; left: 6px; font-size: 4px; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 0.07em; }
+.card-mock .circles { position: absolute; bottom: 6px; right: 5px; width: 16px; height: 10px; }
+.card-mock .c1 { width: 10px; height: 10px; border-radius: 50%; background: #eb001b; position: absolute; right: 0; }
+.card-mock .c2 { width: 10px; height: 10px; border-radius: 50%; background: #f79e1b; position: absolute; right: 5px; }
+.id-mock { width: 82px; height: 52px; background: #e0e8f0; border-radius: 5px; margin: 0.4rem auto 0.2rem; border: 1.5px solid #c0ccd8; display: flex; align-items: center; justify-content: flex-start; padding: 0 8px; gap: 7px; flex-shrink: 0; }
+.id-mock .photo { width: 22px; height: 28px; background: #b0bfcc; border-radius: 2px; flex-shrink: 0; }
+.id-mock .lines { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.id-mock .line { height: 4px; background: #b0bfcc; border-radius: 2px; }
+.this-side { font-size: 0.63rem; font-weight: bold; color: #cc0000; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.1rem; }
+.sig-label { font-size: 0.67rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: bold; color: #666; margin-bottom: 0.4rem; }
+#sigCanvas { width: 100%; height: 150px; border: 1px solid #bbb; border-radius: 3px; cursor: crosshair; background: white; display: block; touch-action: none; }
+.sig-controls { display: flex; align-items: center; gap: 0.75rem; margin-top: 0.4rem; }
+.btn-clear { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; background: none; border: 1px solid #bbb; border-radius: 3px; padding: 0.35rem 0.8rem; cursor: pointer; color: #666; font-family: Arial, sans-serif; }
+.btn-clear:hover { border-color: #888; color: #333; }
+.sig-hint { font-size: 0.72rem; color: #aaa; font-style: italic; }
+.disclaimer { background: white; border: 1px solid #ccc; border-top: 1px solid #ddd; border-radius: 0 0 4px 4px; padding: 1.1rem 2rem; font-size: 0.8rem; line-height: 1.7; color: #333; font-style: italic; }
+.disclaimer a { color: #cc0000; }
+.gen-btn { width: 100%; padding: 1rem; background: #cc0000; color: white; border: none; border-radius: 4px; font-size: 1rem; font-weight: bold; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; margin-top: 1rem; font-family: Arial, sans-serif; transition: background 0.2s; }
+.gen-btn:hover { background: #aa0000; }
+.error-msg { display: none; background: #fff0f0; border: 1px solid #ffb3b3; border-radius: 3px; padding: 0.7rem 1rem; font-size: 0.85rem; color: #cc0000; margin-top: 0.75rem; }
+.req { color: #cc0000; }
+@media (max-width: 520px) {
+  .cols-2, .cols-3 { grid-template-columns: 1fr 1fr; }
+  .form-body, .header, .disclaimer, .staff-panel { padding-left: 1rem; padding-right: 1rem; }
+  .srow.c3 { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 400px) {
+  .upload-grid { grid-template-columns: 1fr; }
+  .cols-3 { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+<div class="staff-panel" id="staffPanel" style="display:none">
+  <h3>Front Desk — Generate Customer Link</h3>
+  <p>Fill in the reservation details, generate a link, and send it to the customer. Arrival date, departure date, and total will be pre-filled and locked when they open the form.</p>
+  <div class="srow c3">
+    <div class="sfield"><span class="flabel">Arrival Date</span><input type="date" id="s_arrival"></div>
+    <div class="sfield"><span class="flabel">Departure Date</span><input type="date" id="s_departure"></div>
+    <div class="sfield"><span class="flabel">Total Amount ($)</span><input type="text" id="s_total" placeholder="e.g. 149.50"></div>
+  </div>
+  <div class="srow c2">
+    <div class="sfield"><span class="flabel">Guest Name (optional)</span><input type="text" id="s_guest" placeholder="Pre-fill guest name"></div>
+    <div class="sfield"><span class="flabel">Confirmation # (optional)</span><input type="text" id="s_confirm" placeholder="Reservation #"></div>
+  </div>
+  <button class="gen-link-btn" onclick="generateLink()">Generate Customer Link</button>
+  <div class="link-output" id="linkOutput">
+    <div id="linkText"></div>
+    <button class="copy-btn" onclick="copyLink()">Copy Link</button>
+  </div>
+</div>
+
+<div class="header">
+  <div class="logo-block">
+    <div>
+      <div style="display:flex;align-items:baseline;">
+        <span class="logo-super">Super</span><span class="logo-8">8</span>
+      </div>
+      <span class="logo-wyndham">by Wyndham</span>
+    </div>
+  </div>
+  <div class="motel-info">
+    <strong>2425 Sloans Way, Hernando, MS 38632</strong><br>
+    Phone: 662-429-5334 &nbsp;&nbsp; Fax: 662-429-5334<br>
+    Email: <a href="mailto:hernandosuper8@yahoo.com">hernandosuper8@yahoo.com</a>
+  </div>
+</div>
+<div class="title-bar">Credit Card Authorization</div>
+
+<div class="form-body">
+  <div class="prefill-notice" id="prefillNotice">Fields highlighted in blue were pre-filled by our front desk staff. Please review and complete the remaining fields.</div>
+
+  <div class="section">
+    <div class="section-label">Guest Information</div>
+    <div class="field-row cols-2">
+      <div class="field"><label>Guest Name <span class="req">*</span></label><input type="text" id="guestName" placeholder="Full name of guest"></div>
+      <div class="field"><label>Date</label><input type="date" id="formDate"></div>
+    </div>
+    <div class="field-row cols-2">
+      <div class="field"><label>Arrival Date <span class="req">*</span></label><input type="date" id="arrival"></div>
+      <div class="field"><label>Departure Date <span class="req">*</span></label><input type="date" id="departure"></div>
+    </div>
+    <div class="field-row cols-3">
+      <div class="field"><label>Number of Nights</label><input type="number" id="numNights" placeholder="0" min="1"></div>
+      <div class="field"><label>Number of Rooms</label><input type="number" id="numRooms" placeholder="0" min="1"></div>
+      <div class="field"><label>Guests per Room</label><input type="number" id="numGuests" placeholder="0" min="1"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Call me at (phone number)</label><input type="tel" id="callAt" placeholder="Best phone number to reach you"></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Card Information</div>
+    <div class="field-row">
+      <div class="field">
+        <label>Card Type <span class="req">*</span></label>
+        <div class="radio-row">
+          <label><input type="radio" name="cardType" value="Master Card"> Master Card</label>
+          <label><input type="radio" name="cardType" value="Visa"> Visa</label>
+          <label><input type="radio" name="cardType" value="American Express"> American Express</label>
+          <label><input type="radio" name="cardType" value="Discover"> Discover</label>
+          <label><input type="radio" name="cardType" value="Other"> Other</label>
+        </div>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Name on Credit Card <span class="req">*</span></label><input type="text" id="cardName" placeholder="Exactly as it appears on the card"></div>
+    </div>
+    <div class="field-row cols-2">
+      <div class="field"><label>Card Number (last 4 digits) <span class="req">*</span></label><input type="text" id="cardLast4" placeholder="XXXX" maxlength="4" style="font-family:'Courier New',monospace;letter-spacing:0.15em;"></div>
+      <div class="field"><label>Expiration Date <span class="req">*</span></label><input type="text" id="expDate" placeholder="MM / YY" maxlength="7"></div>
+    </div>
+    <div class="field-row cols-2">
+      <div class="field"><label>CVV / Security Code</label><input type="text" id="cvv" placeholder="3 or 4 digits" maxlength="4"></div>
+      <div class="field"><label>Billing ZIP Code</label><input type="text" id="billingZip" placeholder="e.g. 38632" maxlength="10"></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Required Photos <span class="req">*</span></div>
+    <div style="background:#fff8e1;border:1.5px solid #f5c800;border-radius:5px;padding:0.75rem 1rem;margin-bottom:1rem;font-size:0.82rem;color:#555;line-height:1.6;">
+      <strong>Two photos required.</strong> Please make sure each photo is clear and all text is readable. Tap a box to take a photo or choose from your gallery.
+    </div>
+    <div class="upload-grid">
+
+      <div class="upload-slot" id="slot_card">
+        <input type="file" id="fileCard" accept="image/*" capture="environment">
+        <img class="upload-preview" id="prevCard" alt="Credit card front">
+        <div class="slot-icon">💳</div>
+        <div class="slot-title">Credit Card</div>
+        <div class="slot-side">FRONT side only</div>
+        <div class="card-mock">
+          <div class="chip"></div>
+          <div class="cnum">•••• •••• •••• 1234</div>
+          <div class="cname">J. SMITH &nbsp; 12/28</div>
+          <div class="circles"><div class="c2"></div><div class="c1"></div></div>
+        </div>
+        <div class="this-side">This side faces up</div>
+        <div class="slot-hint">Shows your name, card number &amp; expiry date</div>
+        <div class="upload-check" id="check_card">Photo added</div>
+      </div>
+
+      <div class="upload-slot" id="slot_id">
+        <input type="file" id="fileID" accept="image/*" capture="environment">
+        <img class="upload-preview" id="prevID" alt="Photo ID">
+        <div class="slot-icon">🪪</div>
+        <div class="slot-title">Photo ID</div>
+        <div class="slot-side">Must match name on card</div>
+        <div class="id-mock">
+          <div class="photo"></div>
+          <div class="lines">
+            <div class="line" style="width:90%"></div>
+            <div class="line" style="width:70%"></div>
+            <div class="line" style="width:80%"></div>
+          </div>
+        </div>
+        <div class="this-side">Front of ID</div>
+        <div class="slot-hint">Driver's license or passport — name must match your credit card</div>
+        <div class="upload-check" id="check_id">Photo added</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Charge Details</div>
+    <p style="font-size:0.83rem;font-weight:bold;color:#222;margin-bottom:0.9rem;">I understand that I am responsible for all charges incurred on this account, as specified:</p>
+    <div class="field-row cols-3">
+      <div class="field"><label>Room Rate (per night)</label><input type="text" id="roomRate" placeholder="$0.00"></div>
+      <div class="field"><label>Tax</label><input type="text" id="tax" placeholder="$0.00"></div>
+      <div class="field"><label>Total Amount <span class="req">*</span></label><input type="text" id="totalAmount" placeholder="$0.00"></div>
+    </div>
+    <div class="incidentals-box">
+      <span class="inc-text">You agree to pay for the incidentals if any:</span>
+      <label><input type="radio" name="incidentals" value="YES"> YES</label>
+      <label><input type="radio" name="incidentals" value="NO"> NO</label>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Additional Information (if needed)</label><textarea id="addlInfo" placeholder="Any additional details or notes..."></textarea></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Cardholder Signature</div>
+    <p style="font-size:0.83rem;color:#444;margin-bottom:0.9rem;line-height:1.6;">I authorize Super 8 Hernando, MS to use my credit card for payment of charges while staying at this property. I confirm I am the authorized cardholder and all information provided is accurate.</p>
+    <div class="sig-label">Sign below <span class="req">*</span></div>
+    <canvas id="sigCanvas" width="660" height="150"></canvas>
+    <div class="sig-controls">
+      <button class="btn-clear" onclick="clearSig()">Clear</button>
+      <span class="sig-hint">Draw your signature using mouse or finger</span>
+    </div>
+    <div class="field-row cols-2" style="margin-top:1rem;">
+      <div class="field"><label>Cardholder's Name (Print) <span class="req">*</span></label><input type="text" id="cardholderPrint" placeholder="Print full name"></div>
+      <div class="field"><label>Date Signed</label><input type="date" id="signDate"></div>
+    </div>
+  </div>
+
+  <div class="error-msg" id="errorMsg"></div>
+  <button class="gen-btn" onclick="generatePDF()">Download Authorization PDF</button>
+</div>
+
+<div class="disclaimer">
+  Please fax this form along with a copy of the credit card (front and back) and driver's license matching the credit card to <strong>662-429-5334</strong> or email us at <a href="mailto:hernandosuper8@yahoo.com">hernandosuper8@yahoo.com</a> as the cardholder's identification.
+</div>
+
+</div>
+<script>
+const params = new URLSearchParams(window.location.search);
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('formDate').valueAsDate = new Date();
+  document.getElementById('signDate').valueAsDate = new Date();
+  if (params.get('staff') === '1') document.getElementById('staffPanel').style.display = 'block';
+  let any = false;
+  const prefill = (id, key) => {
+    const val = params.get(key);
+    if (val) { const el = document.getElementById(id); el.value = val; el.readOnly = true; any = true; }
+  };
+  prefill('arrival','arrival'); prefill('departure','departure'); prefill('totalAmount','total'); prefill('guestName','guest');
+  if (any) document.getElementById('prefillNotice').style.display = 'block';
+});
+function generateLink() {
+  const base = window.location.href.split('?')[0];
+  const p = new URLSearchParams();
+  const map = {arrival:'s_arrival',departure:'s_departure',total:'s_total',guest:'s_guest',confirm:'s_confirm'};
+  for (const [key,id] of Object.entries(map)) { const val = document.getElementById(id).value.trim(); if (val) p.set(key, val); }
+  const link = base + '?' + p.toString();
+  document.getElementById('linkText').textContent = link;
+  document.getElementById('linkOutput').style.display = 'block';
+}
+function copyLink() {
+  navigator.clipboard.writeText(document.getElementById('linkText').textContent).then(() => {
+    const btn = document.querySelector('.copy-btn'); btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy Link', 2000);
+  });
+}
+const photos = {card:null,id:null};
+function setupUpload(fileId,prevId,slotId,checkId,key) {
+  document.getElementById(fileId).addEventListener('change', function() {
+    const file = this.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      const prev = document.getElementById(prevId);
+      prev.src = e.target.result; prev.style.display = 'block';
+      const slot = document.getElementById(slotId);
+      slot.querySelectorAll('.slot-icon,.slot-title,.slot-side,.card-mock,.id-mock,.this-side,.slot-hint').forEach(el => el.style.display = 'none');
+      document.getElementById(checkId).style.display = 'block';
+      slot.classList.add('has-image');
+      photos[key] = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+setupUpload('fileCard','prevCard','slot_card','check_card','card');
+setupUpload('fileID','prevID','slot_id','check_id','id');
+const canvas = document.getElementById('sigCanvas');
+const ctx = canvas.getContext('2d');
+let drawing = false, hasSig = false;
+function setupCanvas() {
+  const rect = canvas.getBoundingClientRect(); const dpr = window.devicePixelRatio || 1;
+  canvas.width = rect.width * dpr; canvas.height = 150 * dpr; ctx.scale(dpr, dpr);
+  ctx.strokeStyle = '#000'; ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+}
+setupCanvas();
+window.addEventListener('resize', () => { if (!hasSig) setupCanvas(); });
+function getPos(e) { const r = canvas.getBoundingClientRect(); const s = e.touches ? e.touches[0] : e; return {x:s.clientX-r.left,y:s.clientY-r.top}; }
+canvas.addEventListener('mousedown', e => { drawing=true; const p=getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); });
+canvas.addEventListener('mousemove', e => { if(!drawing) return; const p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); hasSig=true; });
+canvas.addEventListener('mouseup', () => drawing=false);
+canvas.addEventListener('mouseleave', () => drawing=false);
+canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing=true; const p=getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); },{passive:false});
+canvas.addEventListener('touchmove', e => { e.preventDefault(); if(!drawing) return; const p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); hasSig=true; },{passive:false});
+canvas.addEventListener('touchend', () => drawing=false);
+function clearSig() { ctx.clearRect(0,0,canvas.width,canvas.height); hasSig=false; }
+function v(id) { return (document.getElementById(id)?.value||'').trim(); }
+function fmtDate(val) { if(!val) return '—'; return new Date(val+'T12:00:00').toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'}); }
+function showErr(msg) { const el=document.getElementById('errorMsg'); el.textContent=msg; el.style.display='block'; el.scrollIntoView({behavior:'smooth',block:'center'}); }
+function generatePDF() {
+  document.getElementById('errorMsg').style.display = 'none';
+  const guestName=v('guestName'),cardName=v('cardName'),cardLast4=v('cardLast4'),expDate=v('expDate'),totalAmount=v('totalAmount'),cardholderPrint=v('cardholderPrint');
+  const cardTypeEl=document.querySelector('input[name="cardType"]:checked');
+  if (!guestName) return showErr('Please enter the guest name.');
+  if (!v('arrival')) return showErr('Please enter the arrival date.');
+  if (!v('departure')) return showErr('Please enter the departure date.');
+  if (!cardTypeEl) return showErr('Please select the card type.');
+  if (!cardName) return showErr('Please enter the name on the credit card.');
+  if (!cardLast4||cardLast4.length<4) return showErr('Please enter the last 4 digits of the card.');
+  if (!expDate) return showErr('Please enter the card expiration date.');
+  if (!totalAmount) return showErr('Please enter the total authorized amount.');
+  if (!photos.card) return showErr('Please upload a photo of the FRONT of your credit card.');
+  if (!photos.id) return showErr('Please upload a photo of your ID that matches the name on the card.');
+  if (!cardholderPrint) return showErr('Please print your cardholder name.');
+  if (!hasSig) return showErr('Please sign the form before downloading.');
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'letter'});
+  const pW=215.9,ml=18,cw=pW-36; let y=0;
+  doc.setFillColor(245,200,0); doc.roundedRect(pW/2-22,6,44,20,2,2,'F');
+  doc.setDrawColor(200,162,0); doc.setLineWidth(0.8); doc.roundedRect(pW/2-22,6,44,20,2,2,'S');
+  doc.setFont('times','bolditalic'); doc.setFontSize(14); doc.setTextColor(180,0,0); doc.text('Super',pW/2-9,16,{align:'right'});
+  doc.setFont('helvetica','bold'); doc.setFontSize(20); doc.text('8',pW/2+9,17,{align:'right'});
+  doc.setFont('helvetica','normal'); doc.setFontSize(5.5); doc.setTextColor(60,60,60); doc.text('BY WYNDHAM',pW/2,23,{align:'center'});
+  y=32; doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(20,20,20);
+  doc.text('2425 Sloans Way, Hernando, MS 38632',pW/2,y,{align:'center'});
+  y+=5; doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.text('Phone: 662-429-5334     Fax: 662-429-5334',pW/2,y,{align:'center'});
+  y+=5; doc.setTextColor(180,0,0); doc.text('Email: hernandosuper8@yahoo.com',pW/2,y,{align:'center'}); y+=7;
+  doc.setFillColor(20,20,20); doc.rect(0,y,pW,9,'F');
+  doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(255,255,255); doc.text('CREDIT CARD AUTHORIZATION',pW/2,y+6,{align:'center'}); y+=14;
+  function sBar(t){doc.setFillColor(238,238,238);doc.rect(ml,y,cw,6,'F');doc.setDrawColor(180,180,180);doc.setLineWidth(0.3);doc.line(ml,y+6,ml+cw,y+6);doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(80,80,80);doc.text(t,ml+2,y+4.2);y+=9;}
+  function fld(label,val,x,w){doc.setFont('helvetica','bold');doc.setFontSize(6.5);doc.setTextColor(130,130,130);doc.text(label,x,y);doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(20,20,20);doc.text(String(val||'—'),x,y+5.5);doc.setDrawColor(210,210,210);doc.setLineWidth(0.25);doc.line(x,y+7.5,x+w,y+7.5);}
+  sBar('GUEST INFORMATION');
+  fld('GUEST NAME',guestName,ml,cw*0.55); fld('DATE',fmtDate(v('formDate')),ml+cw*0.6,cw*0.38); y+=12;
+  fld('ARRIVAL',fmtDate(v('arrival')),ml,cw*0.28); fld('DEPARTURE',fmtDate(v('departure')),ml+cw*0.33,cw*0.28); fld('CALL ME AT',v('callAt')||'—',ml+cw*0.65,cw*0.33); y+=12;
+  fld('NIGHTS',v('numNights')||'—',ml,cw*0.28); fld('ROOMS',v('numRooms')||'—',ml+cw*0.33,cw*0.28); fld('GUESTS/ROOM',v('numGuests')||'—',ml+cw*0.65,cw*0.33); y+=14;
+  sBar('CARD INFORMATION');
+  fld('CARD TYPE',cardTypeEl.value,ml,cw*0.45); fld('EXPIRATION',expDate,ml+cw*0.5,cw*0.22); fld('CVV',v('cvv')||'—',ml+cw*0.77,cw*0.21); y+=12;
+  fld('NAME ON CARD',cardName,ml,cw*0.55); fld('CARD NUMBER','**** **** **** '+cardLast4,ml+cw*0.6,cw*0.38); y+=12;
+  fld('BILLING ZIP',v('billingZip')||'—',ml,cw*0.28); y+=12;
+  sBar('CHARGE DETAILS');
+  fld('ROOM RATE',v('roomRate')||'—',ml,cw*0.28); fld('TAX',v('tax')||'—',ml+cw*0.33,cw*0.28); fld('TOTAL AMOUNT',totalAmount,ml+cw*0.65,cw*0.33); y+=12;
+  const incEl=document.querySelector('input[name="incidentals"]:checked'); const incVal=incEl?incEl.value:'—';
+  doc.setFillColor(255,252,230); doc.setDrawColor(200,160,0); doc.setLineWidth(0.5); doc.rect(ml,y,cw,8,'FD');
+  doc.setFont('helvetica','bolditalic'); doc.setFontSize(8.5); doc.setTextColor(30,30,30); doc.text('YOU AGREE TO PAY FOR THE INCIDENTALS IF ANY:',ml+3,y+5.5);
+  doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(incVal==='YES'?0:150,incVal==='YES'?120:0,0); doc.text(incVal,ml+cw-12,y+5.5); y+=12;
+  const addl=v('addlInfo'); if(addl){fld('ADDITIONAL INFO',addl,ml,cw);y+=10;} y+=2;
+  sBar('AUTHORIZATION & SIGNATURE');
+  doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(40,40,40);
+  const stmt='I understand that I am responsible for all charges incurred on this account as specified above. I confirm I am the authorized cardholder and all information is accurate.';
+  const sl=doc.splitTextToSize(stmt,cw); doc.text(sl,ml,y); y+=sl.length*4+4;
+  doc.setDrawColor(180,180,180); doc.setLineWidth(0.4); doc.rect(ml,y,cw*0.62,36);
+  doc.setFont('helvetica','bold'); doc.setFontSize(6.5); doc.setTextColor(130,130,130); doc.text("CARDHOLDER'S SIGNATURE",ml+2,y+4);
+  doc.addImage(canvas.toDataURL('image/png'),'PNG',ml+1,y+5,cw*0.60,28);
+  const dcx=ml+cw*0.66;
+  fld("NAME (PRINT)",cardholderPrint,dcx,cw*0.32);
+  doc.setFont('helvetica','bold'); doc.setFontSize(6.5); doc.setTextColor(130,130,130); doc.text('DATE SIGNED',dcx,y+20);
+  doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(20,20,20); doc.text(fmtDate(v('signDate')),dcx,y+27); y+=42;
+  const footerY=258;
+  doc.setDrawColor(180,180,180); doc.setLineWidth(0.3); doc.line(ml,footerY,ml+cw,footerY);
+  doc.setFont('helvetica','bolditalic'); doc.setFontSize(7.8); doc.setTextColor(50,50,50);
+  const dis="Please fax this form along with the copy of the credit card (front and back) and driver's license matching the credit card to 662-429-5334 or email us at hernandosuper8@yahoo.com as the card holder's Identification.";
+  doc.text(doc.splitTextToSize(dis,cw),ml,footerY+5);
+  doc.addPage();
+  doc.setFillColor(20,20,20); doc.rect(0,0,pW,12,'F');
+  doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(255,255,255);
+  doc.text('IDENTIFICATION DOCUMENTS — '+guestName.toUpperCase(),pW/2,8,{align:'center'});
+  let py=18; const hw=(cw-6)/2;
+  doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(60,60,60);
+  doc.text('CREDIT CARD — FRONT SIDE',ml,py);
+  doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(120,120,120);
+  doc.text('(cardholder name, card number & expiry date visible)',ml,py+4); py+=7;
+  doc.setDrawColor(180,180,180); doc.setLineWidth(0.4); doc.rect(ml,py,hw,62);
+  try{doc.addImage(photos.card,'JPEG',ml+1,py+1,hw-2,60,undefined,'FAST');}catch(e){try{doc.addImage(photos.card,'PNG',ml+1,py+1,hw-2,60,undefined,'FAST');}catch(e2){}}
+  const idX=ml+hw+6;
+  doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(60,60,60);
+  doc.text('PHOTO ID — NAME MATCHES CARD',idX,py-7);
+  doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(120,120,120);
+  doc.text("(driver's license or passport)",idX,py-3);
+  doc.setDrawColor(180,180,180); doc.rect(idX,py,hw,62);
+  try{doc.addImage(photos.id,'JPEG',idX+1,py+1,hw-2,60,undefined,'FAST');}catch(e){try{doc.addImage(photos.id,'PNG',idX+1,py+1,hw-2,60,undefined,'FAST');}catch(e2){}}
+  py+=70;
+  doc.setFont('helvetica','italic'); doc.setFontSize(8); doc.setTextColor(100,100,100);
+  doc.text('Documents uploaded by cardholder as part of the credit card authorization submission.',pW/2,py,{align:'center'});
+  const gd=new Date().toLocaleString('en-US',{dateStyle:'medium',timeStyle:'short'});
+  for(let i=1;i<=2;i++){
+    doc.setPage(i); doc.setFillColor(20,20,20); doc.rect(0,275,pW,12,'F');
+    doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(200,200,200);
+    doc.text('Super 8 Hernando, MS  •  hernandosuper8@yahoo.com  •  Generated: '+gd+'  •  Page '+i+' of 2',pW/2,282.5,{align:'center'});
+  }
+  doc.save('CC_Auth_'+guestName.replace(/\s+/g,'_')+'_'+new Date().toISOString().slice(0,10)+'.pdf');
+}
+</script>
+</body>
+</html>
