@@ -696,14 +696,15 @@ function buildPDF(andEmail) {
     setTimeout(function() {
       var sub = encodeURIComponent('Credit Card Authorization — ' + guestName);
       var bod = encodeURIComponent(
-        'Dear Super 8 Hernando Team,\n\n' +
-        'Please find my completed credit card authorization form attached.\n\n' +
-        'Guest Name: ' + guestName + '\n' +
-        'Arrival: ' + (g('arrival') || '—') + '\n' +
-        'Departure: ' + (g('departure') || '—') + '\n' +
-        'Total Authorized: ' + (totalAmt || '—') + '\n\n' +
-        'The signed PDF is attached to this email.\n\n' +
-        'Thank you,\n' + guestName
+        'Hi,' +
+        '\n\nHere is my credit card authorization form. I give permission to charge my card for the stay of ' + guestName + ' at Super 8 Hernando. The attached PDF has full details including signed authorization, card information and ID.' +
+        '\n\nGuest Name: ' + guestName +
+        '\nArrival: ' + (g('arrival') || '—') +
+        '\nDeparture: ' + (g('departure') || '—') +
+        '\nTotal Authorized: ' + (totalAmt || '—') +
+        '\n\nThe signed PDF is attached to this email.' +
+        '\n\nThank you,' +
+        '\n' + printName
       );
       window.location.href = 'mailto:hernandosuper8@yahoo.com?subject=' + sub + '&body=' + bod;
       document.getElementById('fallbackMsg').style.display = 'block';
