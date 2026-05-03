@@ -310,7 +310,33 @@ textarea { resize: vertical; min-height: 56px; }
   </div>
 
   <div class="error-msg" id="errorMsg"></div>
-  <button class="gen-btn" onclick="generatePDF()">⬇ Download Authorization Letter (PDF)</button>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:1rem;">
+    <button class="gen-btn" style="margin-top:0;background:#555;" onclick="handleSubmit(false)">⬇ Download Only</button>
+    <button class="gen-btn" style="margin-top:0;" onclick="handleSubmit(true)">✉ Download &amp; Email</button>
+  </div>
+  <p style="font-size:0.75rem;color:#999;text-align:center;margin-top:0.5rem;font-style:italic;">
+    "Download &amp; Email" downloads the PDF and opens your email app with our address pre-filled — just attach the PDF and send.
+  </p>
+
+  <div id="stepBox" style="display:none;margin-top:1rem;background:#f0fff4;border:1.5px solid #2a9d2a;border-radius:6px;padding:1.25rem 1.5rem;">
+    <div style="font-weight:bold;font-size:1rem;color:#1a6e2a;margin-bottom:0.75rem;">✅ Step 1 done — PDF downloaded!</div>
+    <div style="font-size:0.88rem;color:#333;line-height:1.7;margin-bottom:1rem;">
+      Now complete Step 2:<br>
+      <strong>1.</strong> Your email app will open with our address already filled in.<br>
+      <strong>2.</strong> Tap the <strong>paperclip / attach</strong> icon.<br>
+      <strong>3.</strong> Find and attach the PDF that just downloaded.<br>
+      <strong>4.</strong> Hit <strong>Send</strong>. Done! ✓
+    </div>
+    <button class="gen-btn" onclick="openEmail()" style="background:#2a9d2a;margin-top:0;">
+      📧 Open Email App (Step 2)
+    </button>
+    <div style="margin-top:0.75rem;text-align:center;">
+      <button onclick="generatePDF()" style="background:none;border:none;color:#666;font-size:0.8rem;cursor:pointer;text-decoration:underline;">
+        Download PDF again
+      </button>
+    </div>
+  </div>
 </div>
 
 <div class="disclaimer">
@@ -482,7 +508,7 @@ function v(id){return(document.getElementById(id)?.value||'').trim();}
 function fmtDate(val){if(!val)return'—';return new Date(val+'T12:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});}
 function showErr(msg){const el=document.getElementById('errorMsg');el.textContent=msg;el.style.display='block';el.scrollIntoView({behavior:'smooth',block:'center'});}
 
-function generatePDF() {
+function generatePDF(andEmail=false) {
   document.getElementById('errorMsg').style.display='none';
   const guestName=v('guestName'),cardName=v('cardName'),expDate=v('expDate'),
         totalAmount=v('totalAmount'),cardholderPrint=v('cardholderPrint');
@@ -601,6 +627,37 @@ function generatePDF() {
   doc.text('Super 8 Hernando, MS  •  hernandosuper8@yahoo.com  •  Generated: '+gd+'  •  Page 2 of 2',pW/2,282.5,{align:'center'});
 
   doc.save('CC_Auth_'+guestName.replace(/\s+/g,'_')+'_'+new Date().toISOString().slice(0,10)+'.pdf');
+  return guestName;
+}
+
+let lastGuestName = '';
+
+function handleSubmit(andEmail=false) {
+  document.getElementById('stepBox').style.display = 'none';
+  const result = generatePDF(andEmail);
+  if (result) {
+    lastGuestName = result;
+    setTimeout(() => {
+      document.getElementById('stepBox').style.display = 'block';
+      document.getElementById('stepBox').scrollIntoView({behavior:'smooth', block:'center'});
+    }, 800);
+  }
+}
+
+function openEmail() {
+  const to = 'hernandosuper8@yahoo.com';
+  const subject = encodeURIComponent('Credit Card Authorization — ' + lastGuestName);
+  const body = encodeURIComponent(
+    'Dear Super 8 Hernando Team,\n\n' +
+    'Please find attached my completed Credit Card Authorization form.\n\n' +
+    'Guest Name: ' + lastGuestName + '\n' +
+    'Arrival: ' + (document.getElementById('arrival').value || '—') + '\n' +
+    'Departure: ' + (document.getElementById('departure').value || '—') + '\n' +
+    'Total: ' + (document.getElementById('totalAmount').value || '—') + '\n\n' +
+    'Please let me know if you need anything else.\n\n' +
+    'Thank you.'
+  );
+  window.location.href = 'mailto:' + to + '?subject=' + subject + '&body=' + body;
 }
 </script>
 </body>
