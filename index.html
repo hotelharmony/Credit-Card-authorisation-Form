@@ -303,6 +303,9 @@ textarea{resize:vertical;min-height:56px;}
     <button type="button" class="btn-em" id="btnEm">&#9993; Download &amp; Email</button>
   </div>
   <p class="btn-hint">"Download &amp; Email" downloads the PDF then opens your email app with our address pre-filled — just attach the PDF and send.</p>
+  <div id="fallbackMsg" style="display:none;margin-top:0.75rem;background:#fff8e1;border:1.5px solid #f5c800;border-radius:5px;padding:0.75rem 1rem;font-size:0.82rem;color:#555;line-height:1.6;">
+    <strong>Email app didn't open?</strong> No problem — just manually email the downloaded PDF to <a href="mailto:hernandosuper8@yahoo.com" style="color:#cc0000;">hernandosuper8@yahoo.com</a> or fax it to <strong>662-429-5334</strong>.
+  </div>
 
 </div><!-- /form-body -->
 
@@ -585,7 +588,7 @@ function buildPDF(andEmail) {
 
   // Body 1
   var nights = g('numNights') || '—';
-  var b1 = 'I, ' + guestName + ', the undersigned authorized cardholder, hereby authorize Super 8 by Wyndham, Hernando, MS to charge my ' + cardType + ' credit card ending in ' + last4 + ' (expiring ' + expDate + ') for my accommodation charges during my upcoming stay at your property.';
+  var b1 = 'I, ' + printName + ', the authorized cardholder, hereby authorize Super 8 by Wyndham, Hernando, MS to charge my ' + cardType + ' credit card ending in ' + last4 + ' (expiring ' + expDate + ') for the accommodation charges of ' + guestName + ' during their upcoming stay at your property.';
   var b1l = doc.splitTextToSize(b1, cw);
   doc.text(b1l, ml, y); y += b1l.length * 5 + 5;
 
@@ -703,6 +706,7 @@ function buildPDF(andEmail) {
         'Thank you,\n' + guestName
       );
       window.location.href = 'mailto:hernandosuper8@yahoo.com?subject=' + sub + '&body=' + bod;
+      document.getElementById('fallbackMsg').style.display = 'block';
     }, 1500);
   }
 }
